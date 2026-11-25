@@ -1,6 +1,10 @@
 # Valorant Tactical Hub — Monorepo Automation Makefile
 GRADLE_VERSION := 9.9.1
 
+# Keep Gradle's daemon, wrapper and caches inside this project on Windows too.
+# This avoids permission conflicts with a locked global C:\\Users\\...\\.gradle directory.
+export GRADLE_USER_HOME := $(CURDIR)/.gradle-user
+
 .PHONY: setup-gradle init up-db down-db test build build-docker run-roster run-analytics run-rank dev-frontend dev-mock dev-api deploy-cloud deploy-frontend
 
 # --- Підготовка проєкту та залежностей ---
@@ -28,14 +32,14 @@ build:
 	./gradlew clean build
 	npm --prefix frontend run test
 
-run-roster:
-	VTH_ENVIRONMENT=dev ./gradlew :roster-service:run
+run-roster: up-db
+	./gradlew :roster-service:run
 
-run-analytics:
-	VTH_ENVIRONMENT=dev ./gradlew :match-analytics-service:run
+run-analytics: up-db
+	./gradlew :match-analytics-service:run
 
-run-rank:
-	VTH_ENVIRONMENT=dev ./gradlew :rank-calculator-service:run
+run-rank: up-db
+	./gradlew :rank-calculator-service:run
 
 dev-frontend:
 	npm --prefix frontend run dev

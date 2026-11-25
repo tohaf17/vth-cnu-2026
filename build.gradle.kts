@@ -39,7 +39,8 @@ subprojects {
     extensions.configure<JavaApplication> {
         applicationDefaultJvmArgs = listOf(
             "-Xms64m",
-            "-Xmx128m",
+            "-Xmx256m",
+            "-XX:MaxMetaspaceSize=192m",
             "-XX:+UseSerialGC"
         )
     }
